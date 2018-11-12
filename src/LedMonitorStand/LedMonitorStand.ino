@@ -9,6 +9,7 @@
 #include "AnimationShiftRainbow.hpp"
 #include "AnimationFreqFromLeft.hpp"
 #include "AnimationFreqMidleOut.hpp"
+#include "AnimationFreqFromBack.hpp"
 #include "AnimationGlitter.hpp"
 #include "AnimationStatic.hpp"
 
@@ -87,7 +88,7 @@ void loop() {
 }
 
 
-#define NUM_MODES 5
+#define NUM_MODES 6
 void modeButtonPressed() {
   mode++;
   if (mode >= NUM_MODES) {
@@ -106,27 +107,24 @@ void modeButtonPressed() {
 
   //check which to display
   if (mode == 0) {
-    Serial.println("switching to static mode");
     currentAnimation = new AnimationStatic();
   }
   else if (mode == 1) {
-    Serial.println("switching to freq wave mode");
     currentAnimation = new AnimationFreqFromLeft();
   }
   else if (mode == 2) {
-    Serial.println("switching to freq wave mode");
-    currentAnimation = new AnimationFreqMidleOut();
+    currentAnimation = new AnimationFreqFromBack();
   }
   else if (mode == 3) {
-    Serial.println("switching rainbow wave mode");
-    currentAnimation = new AnimationShiftRainbow();
+    currentAnimation = new AnimationFreqMidleOut();
   }
   else if (mode == 4) {
-    Serial.println("switching to bands mode");
-    currentAnimation = new AnimationBands();
+    currentAnimation = new AnimationShiftRainbow();
   }
   else if (mode == 5) {
-    Serial.println("switching to glitter mode");
+    currentAnimation = new AnimationBands();
+  }
+  else if (mode == 6) {
     currentAnimation = new AnimationGlitter();
   }
   else {
