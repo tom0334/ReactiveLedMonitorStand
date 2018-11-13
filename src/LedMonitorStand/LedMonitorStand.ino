@@ -7,7 +7,9 @@
 
 #include "AnimationBands.hpp"
 #include "AnimationShiftRainbow.hpp"
-#include "AnimationFreqRainbow.hpp"
+#include "AnimationFreqFromLeft.hpp"
+#include "AnimationFreqMidleOut.hpp"
+#include "AnimationFreqFromBack.hpp"
 #include "AnimationGlitter.hpp"
 #include "AnimationStatic.hpp"
 
@@ -36,17 +38,17 @@ void setup() {
 ///////////////////////////////////////////////////////////////////////
 
 /**
- * Respond to button presses, and update the current animation.
- * 
- * The mode button changes which animation is currently displayed.
- * 
- * The yellow button is a global brightness setting.
- * Brightness is changed with the slider.
- *
- * The other buttons are 'adjust' buttons, they adjust a specific setting within an animation.
- * The actual value is changed by sliding the slider.
- * 
- */
+   Respond to button presses, and update the current animation.
+
+   The mode button changes which animation is currently displayed.
+
+   The yellow button is a global brightness setting.
+   Brightness is changed with the slider.
+
+   The other buttons are 'adjust' buttons, they adjust a specific setting within an animation.
+   The actual value is changed by sliding the slider.
+
+*/
 
 uint8_t mode = 0;
 uint8_t adjust = 0;
@@ -86,7 +88,7 @@ void loop() {
 }
 
 
-#define NUM_MODES 4
+#define NUM_MODES 6
 void modeButtonPressed() {
   mode++;
   if (mode >= NUM_MODES) {
@@ -105,23 +107,24 @@ void modeButtonPressed() {
 
   //check which to display
   if (mode == 0) {
-    Serial.println("switching to static mode");
     currentAnimation = new AnimationStatic();
   }
   else if (mode == 1) {
-    Serial.println("switching to freq wave mode");
-    currentAnimation = new AnimationFreqRainbow();
+    currentAnimation = new AnimationFreqFromLeft();
   }
   else if (mode == 2) {
-    Serial.println("switching rainbow wave mode");
-    currentAnimation = new AnimationShiftRainbow();
+    currentAnimation = new AnimationFreqFromBack();
   }
   else if (mode == 3) {
-    Serial.println("switching to bands mode");
-    currentAnimation = new AnimationBands();
+    currentAnimation = new AnimationFreqMidleOut();
   }
   else if (mode == 4) {
-    Serial.println("switching to glitter mode");
+    currentAnimation = new AnimationShiftRainbow();
+  }
+  else if (mode == 5) {
+    currentAnimation = new AnimationBands();
+  }
+  else if (mode == 6) {
     currentAnimation = new AnimationGlitter();
   }
   else {
