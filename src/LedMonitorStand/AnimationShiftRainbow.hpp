@@ -25,10 +25,13 @@ class AnimationShiftRainbow : public MusicAnimation {
   public:
     void update(Measurer & measurer, int adjust, int potInput) {
       MusicAnimation::update(measurer, adjust, potInput);
+
       if (adjust == GREEN_MODE) {
+        //potInput is an int from 0 to 1023, brightness should be from 0 to 255
         this->minBrightness = potInput / 4;
       }
 
+      //0 is the bass
       uint8_t input = measurer.get(0);
       showColor(input);
     }
@@ -43,36 +46,47 @@ class AnimationShiftRainbow : public MusicAnimation {
     LinkedList<PreviousValue>  previousValues = LinkedList<PreviousValue>();
 
     uint8_t hueBias = 0;
+    //the amount of updates that were done after the hue was changed.
     int hueCounter = 0;
 
-
+    /**
+    Shows a color according to an input, and then shifts it to the sides.
+    */
     void showColor(uint8_t input) {
+      //the list size is capped at 100
       if (previousValues.size() > 100) {
         PreviousValue toLongAgo = previousValues.shift();
+        //removes the first value and subtract it from the sub
         sum -= toLongAgo.input;
       }
       sum += input;
       float avg = (float) sum / (float) previousValues.size();
 
-      uint8_t shiftInput =  input;
-
-      boolean madeThreshold = input < avg || input < 30 || input < 200;
-      if ( ! madeThreshold ) {
-        shiftInput = minBrightness;
-      }
-      PreviousValue value = {input, true};
+      boolean madeThreshold = input > avg ||  input > 200;
+      
+      //add the new value
+      PreviousValue value = {input, madeThreshold};
       previousValues.add(value);
 
+      //If the ThresHold was not reached, the minBrightness is shown
+      //the MinBrightness is choosable by the user.
+      if ( ! madeThreshold ) {
+        input = minBrightness;
+      }
 
+      //set the center leds to the hue at max brightness.
       for (int i = RIGHT_EDGE + 1; i < LEFT_EDGE; i++) {
         leds[i] =  CHSV( getHue(i), 255, 255);
       }
 
-      leds[RIGHT_EDGE] =  CHSV( getHue(RIGHT_EDGE), 255, shiftInput);
-      leds[LEFT_EDGE] =  CHSV(getHue(LEFT_EDGE), 255, shiftInput);
+      //set the brightness of the edges to the input given.
+      leds[RIGHT_EDGE] =  CHSV( getHue(RIGHT_EDGE), 255, input);
+      leds[LEFT_EDGE] =  CHSV(getHue(LEFT_EDGE), 255, input);
 
+      //shifts to both sides
       shiftRainbow();
 
+      //adjust the hue
       if (hueCounter == ITERATION_PER_HUE) {
         hueBias += HUESPEED;
         hueCounter = 0;
