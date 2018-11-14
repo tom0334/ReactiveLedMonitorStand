@@ -6,15 +6,19 @@
 #define SHIFT_RAINBOW_ANIMATION
 
 
-//this stores a previous input value
+//this stores a previous input value, used to determine if the brightness should be boosted.
 struct PreviousValue {
   uint8_t input;
   bool thresHoldHit;
 };
 
+/**
+A classic RGB rainbow animation that responds to the beat. It does so by keeping an average of the last 100 input values.
+If the input is larger than the average, then it is probably a beat, so the brightness should be upped for this input.
+*/
 class AnimationShiftRainbow : public MusicAnimation {
 
-#define HUESPEED 1 //amount to increase hue with
+#define HUESPEED 1 //amount to increase hue with every update
 #define ITERATION_PER_HUE 6 //after how many iterations to increase the hue with HUESPEED
 
 
@@ -78,6 +82,8 @@ class AnimationShiftRainbow : public MusicAnimation {
     }
 
 
+    // Shifts the rainbow animation one to the left and one to the right from the center.
+    // Does so through the previousValues list, because there is no conversion from RGB to HSV in FastLed.
     void shiftRainbow() {
       //start at the left side
       for ( int i = RIGHT_END; i < RIGHT_EDGE; i++) {
