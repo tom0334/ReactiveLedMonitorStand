@@ -13,8 +13,8 @@ struct PreviousValue {
 };
 
 /**
-A classic RGB rainbow animation that responds to the beat. It does so by keeping an average of the last 100 input values.
-If the input is larger than the average, then it is probably a beat, so the brightness should be upped for this input.
+  A classic RGB rainbow animation that responds to the beat. It does so by keeping an average of the last 100 input values.
+  If the input is larger than the average, then it is probably a beat, so the brightness should be upped for this input.
 */
 class AnimationShiftRainbow : public MusicAnimation {
 
@@ -33,7 +33,21 @@ class AnimationShiftRainbow : public MusicAnimation {
 
       //0 is the bass
       uint8_t input = measurer.get(0);
-      showColor(input);
+      CHSV newEdgeColor = getNewColor(input);
+      
+      //set the brightness of the edges to the input given.
+      leds[RIGHT_EDGE] =  newEdgeColor;
+      leds[LEFT_EDGE] = newEdgeColor;
+
+      //shifts to both sides
+      shiftRainbow();
+
+      //adjust the hue
+      if (hueCounter == ITERATION_PER_HUE) {
+        hueBias += HUESPEED;
+        hueCounter = 0;
+      }
+      hueCounter++;
     }
 
   private:
@@ -50,9 +64,12 @@ class AnimationShiftRainbow : public MusicAnimation {
     int hueCounter = 0;
 
     /**
-    Shows a color according to an input, and then shifts it to the sides.
+      Gets the new color for the edges that will be shifter later.
+      The new color is dependent on the previousvalues.
+      Note that this function does NOT change any values, apart from the 
+      previousValues list.
     */
-    void showColor(uint8_t input) {
+    CHSV getNewColor(uint8_t input) {
       //the list size is capped at 100
       if (previousValues.size() > 100) {
         PreviousValue toLongAgo = previousValues.shift();
@@ -63,7 +80,7 @@ class AnimationShiftRainbow : public MusicAnimation {
       float avg = (float) sum / (float) previousValues.size();
 
       boolean madeThreshold = input > avg ||  input > 200;
-      
+
       //add the new value
       PreviousValue value = {input, madeThreshold};
       previousValues.add(value);
@@ -78,28 +95,14 @@ class AnimationShiftRainbow : public MusicAnimation {
       for (int i = RIGHT_EDGE + 1; i < LEFT_EDGE; i++) {
         leds[i] =  CHSV( getHue(i), 255, 255);
       }
-
-      //set the brightness of the edges to the input given.
-      leds[RIGHT_EDGE] =  CHSV( getHue(RIGHT_EDGE), 255, input);
-      leds[LEFT_EDGE] =  CHSV(getHue(LEFT_EDGE), 255, input);
-
-      //shifts to both sides
-      shiftRainbow();
-
-      //adjust the hue
-      if (hueCounter == ITERATION_PER_HUE) {
-        hueBias += HUESPEED;
-        hueCounter = 0;
-      }
-      hueCounter++;
-
+      return CHSV(getHue(RIGHT_EDGE), 255, input);
     }
 
 
     // Shifts the rainbow animation one to the left and one to the right from the center.
     // Does so through the previousValues list, because there is no conversion from RGB to HSV in FastLed.
     void shiftRainbow() {
-      //start at the left side
+      //start at the right side, and move them more towards the center.
       for ( int i = RIGHT_END; i < RIGHT_EDGE; i++) {
         int distanceToCenter = RIGHT_EDGE - i;
 
