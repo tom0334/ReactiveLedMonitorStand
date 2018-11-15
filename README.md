@@ -1,10 +1,33 @@
 
 # ReactiveLedMonitorStand
 Arduino source code for a monitor stand with leds attached to it. The leds react to 3.5mm audio input with animations, using a MSGQ7 chip.
-![Setup](Images/setup.png)
+
 
 ### Hardware setup
-The stand itself is created using a IKEA wall shelf, and some IKEA capita kitchen legs. It has a Arduino UNO and some controls mounted to the bottom to control the LEDS. The Arduino is mounted on the right side, and LED 0 is located on the back right side of the stand. The type of LEDS used is the APA 102, 120 LEDS on a 2m strip. 
+The stand itself is created using a IKEA wall shelf, and some IKEA capita kitchen legs. It has a Arduino UNO and some controls mounted to the bottom to control the LEDS. The Arduino is mounted on the right side, and LED 0 is located on the back right side of the stand. The type of LEDS used is the APA 102, 120 LEDS on a 2m strip.
+
+![Setup](Images/setup.png)
+
+
+### Components
+A list of used components:
+
+ - 1x Arduino UNO
+ - 1x APA 102 LED strip, 2M long, 60 LEDS/M
+ - 1x MSGEQ7 
+ - 5V 8A power suply
+ - 1x Audio jack 3.5 mm, mountable on a breadboard
+ - 3.5 mm cable 
+ - 1x Large breadboard
+ - 1x small breadboard (optional, i used the side to connect the + and - of the buttons more cleanly)
+ - 1x 10 nF capacitor
+ - 2x 100 nF capacitor
+ - 1x 33 pF capacitor
+ - 1x 100 Ohm resistor
+ - 5 button breakout board. Can be replaced with 5 seperate buttons.
+ - Sliding potentiometer
+ - Male- female dupont wires
+ - Male-male dupont wires
 
 ### Controls
 The project uses a set of 5 buttons to adjust different options and switch between different LED modes. To adjust an option, a sliding potentiometer is used. To see to which pins the buttons are connected, see the constants.hpp file.
