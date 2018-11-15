@@ -5,7 +5,12 @@
 #define ANIMATION
 
 
-//Base animation class
+/**
+* A basic Animation class that has an update function. The update function will be called very often,
+* so the logic inside it should be as fast as possible. In it, the colors of the leds should be updated.
+* This is done by using the global leds array. FastLed.update() does NOT need to be called, that is done in
+* the main program.
+*/
 class Animation {
   public:
     virtual void update(Measurer & measurer, int adjust, int potInput) = 0;
